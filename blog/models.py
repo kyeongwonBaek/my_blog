@@ -10,3 +10,5 @@ class Post(models.Model):
 
     def __str__(self):
         return '{}::{}'.format(self.title, self.author)
+    def get_queryset(self):
+        return Post.objects.order_by('-created')
