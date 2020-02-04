@@ -52,6 +52,11 @@ class TestView(TestCase):
         navbar = soup.find('div', id='navbar')
         self.assertIn('Blog', navbar.text)
         self.assertIn('About me', navbar.text)
+    def check_right_side(self, soup):
+        category_card = soup.find('div', id='category-card')
+        self.assertIn('미분류 (1)', category_card.text)  ### 미분류(1) 있어야함
+        self.assertIn('정치/사회 (1)', category_card.text)  ### 정치/사회(1) 있어야 함
+
 
         # 글이 없을 때
     def test_post_list_without_post(self):
@@ -95,13 +100,12 @@ class TestView(TestCase):
         self.assertEqual(post_000_read_more_btn['href'], post_000.get_absolute_url())
 
         #category card에서
-        category_card = body.find('div', id='category-card')
-        self.assertIn('미분류 (1)', category_card.text)### 미분류(1) 있어야함
-        self.assertIn('정치/사회 (1)', category_card.text) ### 정치/사회(1) 있어야 함
-        # main_div에서
-        main_div=body.find('div', id='main-div')
-        self.assertIn('정치/사회', main_div.text)### 첫번째 포스트에는 '정치/사회' 있어야 함
-        self.assertIn('미분류', main_div.text)### 두번째 포스트에는 '미분류' 있어야 함
+        self.check_right_side(soup)
+        # 본문에서
+        main_div = body.find('div', id='main-div')
+        self.assertIn('정치/사회', main_div.text)  ### 첫번째 포스트에는 '정치/사회' 있어야 함
+        self.assertIn('미분류', main_div.text)  ### 두번째 포스트에는 '미분류' 있어야 함
+
 
 
     def test_post_detail(self):
@@ -109,6 +113,13 @@ class TestView(TestCase):
         post_000 = create_post(
             title='The first post',
             content='Hello World',
+            author=self.author_000,
+            category=create_category(name='정치/사회')
+        )
+
+        post_001 = create_post(
+            title='The Second post',
+            content='Hello World 2',
             author=self.author_000,
         )
 
@@ -133,6 +144,12 @@ class TestView(TestCase):
         self.assertIn(post_000.title, main_div.text)
         self.assertIn(post_000.author.username, main_div.text)
         self.assertIn(post_000.content, main_div.text)
+
+        # category card에서
+        self.check_right_side(soup)
+  
+
+
 
 
 
