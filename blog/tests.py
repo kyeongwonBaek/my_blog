@@ -1,21 +1,48 @@
 from django.test import TestCase, Client
 from bs4 import BeautifulSoup
-from .models import Post
+from .models import Post, Category
 from django.utils import timezone
 from django.contrib.auth.models import User
 
-def create_post(title, content, author):
+def create_category(name='life', description=""):
+    category, is_created = Category.objects.get_or_create(
+        name=name,
+        description=description,
+    )
+
+    return category
+def create_post(title, content, author, category=None):
     blog_post = Post.objects.create(
         title=title,
         content=content,
         created=timezone.now(),
         author=author,
+        category=category,
     )
 
     return blog_post
 
 
-# Create your tests here.
+
+class TestModel(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.author_000 = User.objects.create(username='rara', password='1111')
+
+    def test_catergory(self):
+        category = create_category()
+    def test_post(self):
+        category = create_category(
+
+        )
+        post_000 = create_post(
+            title='The first post',
+            content='Hello World',
+            author=self.author_000,
+            category=category
+        )
+        self.assertEqual(category.post_set.count(), 1)
+
 class TestView(TestCase):
     def setUp(self):
         self.client = Client()
@@ -26,8 +53,8 @@ class TestView(TestCase):
         self.assertIn('Blog', navbar.text)
         self.assertIn('About me', navbar.text)
 
-
-    def test_post_list(self):
+        # 글이 없을 때
+    def test_post_list_without_post(self):
         # 페이지 정상적으로 나옴
         response=self.client.get('/blog/')
         self.assertEqual(response.status_code, 200)
@@ -41,10 +68,18 @@ class TestView(TestCase):
         self.assertEqual(Post.objects.count(), 0)
         self.assertIn('아직 게시물이 없습니다', soup.body.text)
 
-        # POST가 0이 아닐 때 '아직 게시물이 없습니다'가 나오지 않는다
+        # 글이 있을 때
+    def test_post_list_with_post(self):
         post_000 = create_post(
             title='The first post',
             content='Hello World',
+            author=self.author_000,
+            category=create_category(name='정치/사회')
+        )
+
+        post_001 = create_post(
+            title='The Second post',
+            content='Hello World 2',
             author=self.author_000,
         )
         self.assertGreater(Post.objects.count(), 0)
@@ -58,6 +93,15 @@ class TestView(TestCase):
         # read-more btn
         post_000_read_more_btn = body.find('a', id='read-more-post-{}'.format(post_000.pk))
         self.assertEqual(post_000_read_more_btn['href'], post_000.get_absolute_url())
+
+        #category card에서
+        category_card = body.find('div', id='category-card')
+        self.assertIn('미분류 (1)', category_card.text)### 미분류(1) 있어야함
+        self.assertIn('정치/사회 (1)', category_card.text) ### 정치/사회(1) 있어야 함
+        # main_div에서
+        main_div=body.find('div', id='main-div')
+        self.assertIn('정치/사회', main_div.text)### 첫번째 포스트에는 '정치/사회' 있어야 함
+        self.assertIn('미분류', main_div.text)### 두번째 포스트에는 '미분류' 있어야 함
 
 
     def test_post_detail(self):
