@@ -55,6 +55,9 @@ class TestView(TestCase):
         self.assertNotIn('아직 게시물이 없습니다', body.text)
         self.assertIn(post_000.title, body.text)
 
+        # read-more btn
+        post_000_read_more_btn = body.find('a', id='read-more-post-{}'.format(post_000.pk))
+        self.assertEqual(post_000_read_more_btn['href'], post_000.get_absolute_url())
 
 
     def test_post_detail(self):
@@ -79,3 +82,15 @@ class TestView(TestCase):
 
         # 네비게이션바 -> 'Blog', 'About me'
         self.check_navbar(soup)
+
+        # body에 제목, 저자, 내용 있음
+        body = soup.body
+        main_div = body.find('div', id='main-div')
+        self.assertIn(post_000.title, main_div.text)
+        self.assertIn(post_000.author.username, main_div.text)
+        self.assertIn(post_000.content, main_div.text)
+
+
+
+
+
