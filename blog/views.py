@@ -1,7 +1,7 @@
 from builtins import super, type
 
 from django.shortcuts import render
-from .models import Post, Category
+from .models import Post, Category, Tag
 from django.views.generic import ListView, DetailView
 # Create your views here.
 
@@ -45,5 +45,22 @@ class PostListByCategory(ListView):
         else:
             category = Category.objects.get(slug=slug)
             context['category'] = category
+
+        return context
+
+class PostListByTag(ListView):
+    def get_queryset(self):
+        slug = self.kwargs['slug']
+        tag = Tag.objects.get(slug=slug)
+        return Post.objects.filter(tags=tag)
+
+    def get_context_data(self, **kwargs):
+        context = super(PostListByTag, self).get_context_data(**kwargs)
+        context['category_list'] = Category.objects.all()
+        context['posts_without_category'] = Post.objects.filter(category=None).count()
+
+        slug = self.kwargs['slug']
+        tag = Tag.objects.get(slug=slug)
+        context['tag'] = Tag.objects.get(slug=slug)
 
         return context
