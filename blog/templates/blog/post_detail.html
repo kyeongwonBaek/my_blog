@@ -10,15 +10,15 @@
 <span class="badge badge-primary float-right">미분류</span>
 {% endif %}
 
-{% if request.user == object.author %}
-<span class="badge badge-primary float-right">EDIT</span>
-{% endif %}
+
 
 <p class="lead">
     by
     {{object.author.username}}
 </p>
-
+{% if request.user == object.author %}
+<span class="badge badge-primary float-right">EDIT</span>
+{% endif %}
 <hr>
 
 <!-- Date/Time -->
@@ -27,13 +27,15 @@
 
 
 {% if object.head_image %}
-<img class="img-fluid rounded" src="http://placehold.it/900x300" alt="">
+<img class="card-img-top" src="{{object.head_image.url}}" alt="Card image cap">
 {% endif %}
 
 <hr>
 
 <!-- Post Content -->
-<p>{{object.content}}</p>
+<p>{{object.get_markdown_content | safe}}</p>
+
+
 {% for tag in object.tags.all %}
 <a href="{{ tag.get_absolute_url }}">#{{tag}}</a>
 {% endfor %}
