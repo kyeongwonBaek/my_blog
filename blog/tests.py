@@ -124,20 +124,26 @@ class TestView(TestCase):
         self.assertEqual(Post.objects.count(), 0)
         self.assertIn('아직 게시물이 없습니다', soup.body.text)
 
-        # 글이 있을 때
+        # post가 있을 때
     def test_post_list_with_post(self):
+        tag_badgirl = create_tag(name='bad_girl')
         post_000 = create_post(
             title='The first post',
             content='Hello World',
             author=self.author_000,
             category=create_category(name='정치/사회')
         )
+        post_000.tags.add(tag_badgirl)
+        post_000.save()
 
         post_001 = create_post(
             title='The Second post',
             content='Hello World 2',
             author=self.author_000,
         )
+        post_001.tags.add(tag_badgirl)
+        post_001.save()
+
         self.assertGreater(Post.objects.count(), 0)
         response = self.client.get('/blog/')
         self.assertEqual(response.status_code, 200)
@@ -157,16 +163,22 @@ class TestView(TestCase):
         self.assertIn('정치/사회', main_div.text)  ### 첫번째 포스트에는 '정치/사회' 있어야 함
         self.assertIn('미분류', main_div.text)  ### 두번째 포스트에는 '미분류' 있어야 함
 
+        #포스트카드안에 태그가 있어야 함
+        post_000_card = main_div.find('div', id='post-card-{}'.format(post_000.pk))
+        self.assertIn('#bad_girl', post_000_card.text)# tag가 해당 post의 카드마다 있다
 
 
     def test_post_detail(self):
         #첫 페이지 화면
+        tag_badgirl = create_tag(name='bad_girl')
         post_000 = create_post(
             title='The first post',
             content='Hello World',
             author=self.author_000,
             category=create_category(name='정치/사회')
         )
+        post_000.tags.add(tag_badgirl)
+        post_000.save()
 
         post_001 = create_post(
             title='The Second post',
@@ -198,6 +210,9 @@ class TestView(TestCase):
 
         # category card에서
         self.check_right_side(soup)
+
+        # 포스트카드안에 태그가 있어야 함
+        self.assertIn('#bad_girl', main_div.text)  # tag가 해당 post의 카드마다 있다
 
     def test_post_list_by_category(self):
         category_politics = create_category(name='정치/사회')
@@ -251,8 +266,6 @@ class TestView(TestCase):
         main_div = soup.find('div', id='main-div')
         self.assertIn('미분류', main_div.text)
         self.assertNotIn(category_politics.name, main_div.text)
-
-
 
 
 

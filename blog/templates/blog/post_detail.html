@@ -30,8 +30,10 @@
 
 <!-- Post Content -->
 <p>{{object.content}}</p>
-
-<!-- Comments Form -->
+{% for tag in object.tags.all %}
+<a href="{{ tag.get_absolute_url }}">#{{tag}}</a>
+{% endfor %}
+<hr>
 <div class="card my-4">
     <h5 class="card-header">Leave a Comment:</h5>
     <div class="card-body">
