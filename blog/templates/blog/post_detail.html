@@ -17,7 +17,7 @@
     {{object.author.username}}
 </p>
 {% if request.user == object.author %}
-<span class="badge badge-primary float-right">EDIT</span>
+<button class="badge badge-primary float-right" onclick="location.href='{{object.get_update_url}}'">EDIT</button>
 {% endif %}
 <hr>
 
