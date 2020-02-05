@@ -4,17 +4,21 @@
 
 
 <h1 >{{object.title}}</h1>
-
-<!-- Author -->
-<p class="lead">
-    by
-    {{object.author.username}}
-</p>
 {% if object.category %}
 <span class="badge badge-primary float-right">{{ object.category.name }}</span>
 {% else %}
 <span class="badge badge-primary float-right">미분류</span>
 {% endif %}
+
+{% if request.user == object.author %}
+<span class="badge badge-primary float-right">EDIT</span>
+{% endif %}
+
+<p class="lead">
+    by
+    {{object.author.username}}
+</p>
+
 <hr>
 
 <!-- Date/Time -->
