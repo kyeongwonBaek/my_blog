@@ -348,6 +348,11 @@ class TestView(TestCase):
         self.assertNotIn('Author', main_div.text)
 
     def test_post_create(self):
+        # 로그인 안 했을 때
+        response = self.client.get('/blog/create/')
+        self.assertNotEqual(response.status_code, 200)
+        # 로그인 했을 때
+        self.client.login(username='rara', password='1111')
         response = self.client.get('/blog/create/')
         self.assertEqual(response.status_code, 200)
 
