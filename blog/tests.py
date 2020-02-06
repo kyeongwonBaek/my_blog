@@ -44,6 +44,7 @@ def create_comment(post, text='some comment', author=None):
         author=author
     )
 
+    return comment
 
 
 class TestModel(TestCase):
@@ -209,6 +210,7 @@ class TestView(TestCase):
             author=self.author_000,
             category=category_politics
         )
+        comment_000 = create_comment(post_000, author=self.author_001)
         post_000.tags.add(tag_badgirl)
         post_000.save()
 
@@ -270,6 +272,13 @@ class TestView(TestCase):
         main_div = soup.find('div', id='main-div')
         self.assertEqual(post_000.author, self.author_000)
         self.assertNotIn('EDIT', main_div.text)
+
+        # 댓글
+        comment_div = main_div.find('div', id='comment-list')
+        self.assertIn(comment_000.author.username, comment_div.text)
+        self.assertIn(comment_000.text, comment_div.text)
+
+
 
     def test_post_list_by_category(self):
         category_politics = create_category(name='정치/사회')
