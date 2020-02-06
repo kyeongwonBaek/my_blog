@@ -53,15 +53,23 @@
     </div>
 </div>
 <div id="comment-list">
-{% for c in object.comment_set.all %}
-<div class="media mb-4" id="comment-id-{{c.pk}}">
-    <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">
-    <div class="media-body">
-        <h5 class="mt-0">{{c.author}}</h5>
-        {{c.get_markdown_content | safe}}
+    {% for c in object.comment_set.all %}
+    <div class="media mb-4" id="comment-id-{{c.pk}}">
+
+        <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">
+
+
+        <div class="media-body">
+            {% if c.author == request.user %}
+            <button class="btn btn-sm btn-warning float-right">edit</button>
+            <button class="btn btn-sm btn-info float-right">delete</button>
+            {% endif %}
+            <h5 class="mt-0">{{c.author}}<small class="test-muted">{{c.created_at}}</small> </h5>
+
+            {{c.get_markdown_content | safe}}
+        </div>
     </div>
-</div>
-{% endfor %}
+    {% endfor %}
 </div>
 
 

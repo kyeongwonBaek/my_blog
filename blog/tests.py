@@ -210,7 +210,9 @@ class TestView(TestCase):
             author=self.author_000,
             category=category_politics
         )
-        comment_000 = create_comment(post_000, author=self.author_001)
+        comment_000 = create_comment(post_000, author=self.author_000)
+        comment_001 = create_comment(post_000, author=self.author_001)
+
         post_000.tags.add(tag_badgirl)
         post_000.save()
 
@@ -277,6 +279,16 @@ class TestView(TestCase):
         comment_div = main_div.find('div', id='comment-list')
         self.assertIn(comment_000.author.username, comment_div.text)
         self.assertIn(comment_000.text, comment_div.text)
+
+        comment_000_div = comment_div.find('div', id='comment-id-{}'.format(comment_000.pk))
+        self.assertNotIn('edit', comment_000_div.text)
+        self.assertNotIn('delete', comment_000_div.text)
+
+        comment_001_div = comment_div.find('div', id='comment-id-{}'.format(comment_001.pk))
+        self.assertIn('edit', comment_001_div.text)
+        self.assertIn('delete', comment_001_div.text)
+
+
 
 
 
