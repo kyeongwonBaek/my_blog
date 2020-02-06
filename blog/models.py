@@ -25,6 +25,7 @@ class Tag(models.Model):
     def get_absolute_url(self):
         return '/blog/tag/{}/'.format(self.slug)
 
+
 class Post(models.Model):
     title = models.CharField(max_length=100)
     content = MarkdownxField()
@@ -45,3 +46,8 @@ class Post(models.Model):
 
     def get_markdown_content(self):
         return markdown(self.content)
+
+class Comment(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    text = MarkdownxField()
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
