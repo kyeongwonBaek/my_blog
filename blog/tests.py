@@ -1,3 +1,5 @@
+from builtins import PermissionError
+
 from django.test import TestCase, Client
 from bs4 import BeautifulSoup
 from .models import Post, Category, Tag, Comment
@@ -445,7 +447,8 @@ class TestView(TestCase):
         login_success =self.client.login(username='sora', password='2222')
         self.assertTrue(login_success)
 
-        response = self.client.get('/blog/delete_comment/{}/'.format(comment_000.pk), follow=True)
+        with self.assertRaises(PermissionError):
+            response = self.client.get('/blog/delete_comment/{}/'.format(comment_000.pk), follow=True)
         self.assertEqual(Comment.objects.count(), 2)
         self.assertEqual(post_000.comment_set.count(), 2)
 
