@@ -449,8 +449,8 @@ class TestView(TestCase):
 
         with self.assertRaises(PermissionError):
             response = self.client.get('/blog/delete_comment/{}/'.format(comment_000.pk), follow=True)
-        self.assertEqual(Comment.objects.count(), 2)
-        self.assertEqual(post_000.comment_set.count(), 2)
+            self.assertEqual(Comment.objects.count(), 2)
+            self.assertEqual(post_000.comment_set.count(), 2)
 
         # 댓쓴이 로그인
         login_success = self.client.login(username='rara', password='1111')
