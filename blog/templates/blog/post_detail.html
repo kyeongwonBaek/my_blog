@@ -17,9 +17,34 @@
     by
     {{object.author.username}}
 </p>
+
 {% if request.user == object.author %}
+<button class="badge badge-primary float-right" data-toggle="modal" data-target="#DeletePostModal">DELETE</button>
 <button class="badge badge-primary float-right" onclick="location.href='{{object.get_update_url}}'">EDIT</button>
 {% endif %}
+
+<div class="modal fade" id="DeletePostModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="1">Alert</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>정말로 삭제하시겠습니까?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" onclick="location.href='/blog/delete_post/{{object.pk}}/'" >Delete</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <hr>
 
 <!-- Date/Time -->
@@ -62,7 +87,7 @@
         <div class="media-body">
             {% if c.author == request.user %}
             <button class="btn btn-sm btn-warning float-right">edit</button>
-            <button class="btn btn-sm btn-info float-right">delete</button>
+            <button class="btn btn-sm btn-info float-right" data-toggle="modal" data-target="#DeleteCommentModal-{{c.pk}}" >delete</button>
             {% endif %}
             <h5 class="mt-0">{{c.author}}<small class="test-muted">{{c.created_at}}</small> </h5>
 
@@ -71,7 +96,30 @@
     </div>
     {% endfor %}
 </div>
+{% for c in object.comment_set.all %}
+{% if user == c.author %}
+<div class="modal fade" id="DeleteCommentModal-{{c.pk}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">정말로 삭제하겠습니까?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>{{c.get_markdown_content | safe}}</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" onclick="location.href='/blog/delete_comment/{{c.pk}}/'" >Delete</button>
 
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endfor %}
 
 
 

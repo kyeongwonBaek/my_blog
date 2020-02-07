@@ -430,5 +430,37 @@ class TestView(TestCase):
         self.assertIn(post_000.title, main_div.text)
         self.assertIn('holly', main_div.text)
 
+    def test_delete_comment(self):
+        post_000 = create_post(
+            title='The first post',
+            content='Hello World',
+            author=self.author_001,
+        )
+        comment_000 = create_comment(post_000, author=self.author_000)
+        comment_001 = create_comment(post_000, author=self.author_001)
+        self.assertEqual(Comment.objects.count(),2)
+        self.assertEqual(post_000.comment_set.count(),2)
+
+        # 다른사람 로그인 경우
+        login_success =self.client.login(username='sora', password='2222')
+        self.assertTrue(login_success)
+
+        response = self.client.get('/blog/delete_comment/{}/'.format(comment_000.pk), follow=True)
+        self.assertEqual(Comment.objects.count(), 2)
+        self.assertEqual(post_000.comment_set.count(), 2)
+
+        # 댓쓴이 로그인
+        login_success = self.client.login(username='rara', password='1111')
+        self.assertTrue(login_success)
+
+        response = self.client.get('/blog/delete_comment/{}/'.format(comment_000.pk), follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Comment.objects.count(), 1)
+        self.assertEqual(post_000.comment_set.count(), 1)
+
+        soup = BeautifulSoup(response.content, 'html.parser')
+        main_div = soup.find('div', id='main-div')
+        self.assertNotIn('rara', main_div.text)
+
 
 
