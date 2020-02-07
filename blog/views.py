@@ -97,17 +97,7 @@ def new_comment(request, pk):
     else:
         return redirect('/blog/')
 
-# class DeleteComment(DeleteView):
-#     model = Comment
-#
-#     def get_object(self, queryset=None):
-#         comment = super(DeleteComment, self).get_object()
-#         if comment.author != self.request.user:
-#             raise PermissionError('Comment 삭제 권한이 없습니다')
-#         return comment
-#     def get_success_url(self):
-#         post = self.get_object().post
-#         return post.get_absolute_url() + '#comment-list'
+
 
 
 def delete_comment(request, pk):
@@ -132,3 +122,12 @@ def delete_post(request, pk):
     else:
         return redirect(post.get_absolute_url())
 
+class CommentUpdate(UpdateView):
+    model = Comment
+    form_class = CommentForm
+
+    def get_object(self, queryset=None):
+        comment = super(type(self), self).get_object()
+        if comment.author != self.request.user:
+            raise PermissionError('Comment 수정 권한이 없습니다.')
+        return comment

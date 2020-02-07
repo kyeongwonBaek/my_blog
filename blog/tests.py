@@ -465,5 +465,44 @@ class TestView(TestCase):
         main_div = soup.find('div', id='main-div')
         self.assertNotIn('rara', main_div.text)
 
+    def test_edit_comment(self):
+        post_000 = create_post(
+            title='The first post',
+            content='Hello World',
+            author=self.author_001,
+        )
+        comment_000 = create_comment(post_000, author=self.author_000)
+        comment_001 = create_comment(post_000, text='pretty', author=self.author_001)
+
+        # 로그인을 하지 않았을 때
+        with self.assertRaises(PermissionError):
+            response=self.client.get('/blog/edit_comment/{}/'.format(comment_000.pk))
+
+        # author_000으로 로그인
+        login_success = self.client.login(username='rara', password='1111')
+        self.assertTrue(login_success)
+        response = self.client.get('/blog/edit_comment/{}/'.format(comment_000.pk))
+        self.assertEqual(response.status_code, 200)
+
+        soup = BeautifulSoup(response.content, 'html.parser')
+        self.assertIn('Edit Comment: ', soup.body.h3)
+
+        response = self.client.post(
+            '/blog/edit_comment/{}/'.format(comment_000.pk),
+            {'text':'haha'},
+            follow=True
+                                    )
+        self.assertEqual(response.status_code, 200)
+        soup = BeautifulSoup(response.content, 'html.parser')
+        self.assertNotIn('some', soup.body.text)
+        self.assertIn('haha', soup.body.text)
+
+
+
+        # author_001으로 로그인
+        login_success = self.client.login(username='sora', password='2222')
+        self.assertTrue(login_success)
+        with self.assertRaises(PermissionError):
+            response = self.client.get('/blog/edit_comment/{}/'.format(comment_000.pk))
 
 

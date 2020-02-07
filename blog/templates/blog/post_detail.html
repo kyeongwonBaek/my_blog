@@ -86,7 +86,7 @@
 
         <div class="media-body">
             {% if c.author == request.user %}
-            <button class="btn btn-sm btn-warning float-right">edit</button>
+            <button class="btn btn-sm btn-warning float-right" onclick="location.href='/blog/edit_comment/{{c.pk}}/'">edit</button>
             <button class="btn btn-sm btn-info float-right" data-toggle="modal" data-target="#DeleteCommentModal-{{c.pk}}" >delete</button>
             {% endif %}
             <h5 class="mt-0">{{c.author}}<small class="test-muted">{{c.created_at}}</small> </h5>
