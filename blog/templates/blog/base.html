@@ -8,6 +8,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <link rel="stylesheet" href="{% static 'blog/bootstrap/bootstrap.css' %}" media="screen">
     <link rel="stylesheet" href="{% static 'blog/_assets/css/custom.min.css' %}">
+    <script src="https://kit.fontawesome.com/9052c1ac51.js" crossorigin="anonymous"></script>
 </head>
 <body>
 <div class="navbar navbar-expand-lg fixed-top navbar-dark bg-primary" id="navbar">
@@ -24,24 +25,47 @@
                 <li class="nav-item">
                     <a class="nav-link" href="https://blog.bootswatch.com">About me</a>
                 </li>
+                {% if user.is_authenticated %}
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" id="download">Log in<span class="caret"></span></a>
+                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">{{user}}<span class="caret"></span></a>
                     <div class="dropdown-menu" aria-labelledby="download">
-                        <a class="dropdown-item" target="_blank" href="https://jsfiddle.net/bootswatch/3he50zsf/">Open in JSFiddle</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="../4/simplex/bootstrap.min.css" download>bootstrap.min.css</a>
-                        <a class="dropdown-item" href="../4/simplex/bootstrap.css" download>bootstrap.css</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="../4/simplex/_variables.scss" download>_variables.scss</a>
-                        <a class="dropdown-item" href="../4/simplex/_bootswatch.scss" download>_bootswatch.scss</a>
+                        <a class="dropdown-item" href="/accounts/logout/" >log out</a>
                     </div>
                 </li>
+                {% else %}
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#LoginModal">
+                    Log in
+                </button>
+                {% endif %}
             </ul>
 
         </div>
     </div>
 </div>
 
+{% load socialaccount %}
+<!-- Modal -->
+<div class="modal fade" id="LoginModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Please Log in</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <a role="button" class="btn btn-primary" href="{% provider_login_url 'google' %}"><i class="fab fa-google"></i>Log in with Google</a>
+                <a role="button" class="btn btn-primary" href="{% provider_login_url 'naver' %}"><i class="fab fa-neos"></i>Log in with Naver</a>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="container">
 
     <div class="row">
@@ -73,18 +97,18 @@
                 <h5 class="card-header">Categories</h5>
                 <div class="card-body">
 
-                            <ul class="list-unstyled mb-0">
+                    <ul class="list-unstyled mb-0">
 
-                                {% for category in category_list %}
-                                <li>
-                                    <a href="{{category.get_absolute_url}}">{{ category.name }} ({{category.post_set.count}})</a>
-                                </li>
-                                {% endfor %}
-                                 <li>
-                                    <a href="/blog/category/_none/">미분류 ({{posts_without_category}})</a>
-                                </li>
+                        {% for category in category_list %}
+                        <li>
+                            <a href="{{category.get_absolute_url}}">{{ category.name }} ({{category.post_set.count}})</a>
+                        </li>
+                        {% endfor %}
+                        <li>
+                            <a href="/blog/category/_none/">미분류 ({{posts_without_category}})</a>
+                        </li>
 
-                            </ul>
+                    </ul>
 
                 </div>
             </div>
