@@ -69,13 +69,21 @@
 <div class="card my-4">
     <h5 class="card-header">Leave a Comment:</h5>
     <div class="card-body">
+        {% if user.is_authenticated %}
         <form method="post" action="{{object.get_absolute_url}}new_comment/" >{% csrf_token %}
             <div class="form-group">
                 {{comment_form | crispy}}
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
+        {% else %}
+         <button type="button" class="btn btn-outline-primary btn-lg btn-block" data-toggle="modal" data-target="#LoginModal">
+            Log in
+        </button>
+        {% endif %}
     </div>
+
+
 </div>
 <div id="comment-list">
     {% for c in object.comment_set.all %}
@@ -83,7 +91,7 @@
         {% if c.author.socialaccount_set.all.0.get_avatar_url %}
         <img width="50px" class="d-flex mr-3 rounded-circle" src="{{ c.author.socialaccount_set.all.0.get_avatar_url }}" alt="">
         {% else %}
-                <img width="50px" class="d-flex mr-3 rounded-circle" src="https://api.adorable.io/avatars/285/{{c.author}}/" alt="">
+        <img width="50px" class="d-flex mr-3 rounded-circle" src="https://api.adorable.io/avatars/285/{{c.author}}/" alt="">
         {% endif %}
 
         <div class="media-body">
