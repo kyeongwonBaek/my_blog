@@ -19,10 +19,17 @@ class PostList(ListView):
         return context
 
 class PostSearch(PostList):
+
     def get_queryset(self):
         q = self.kwargs['q']
         object_list = Post.objects.filter(Q(title__contains=q)|Q(content__contains=q))
         return object_list
+
+    def get_context_data(self, **kwargs):
+        context = super(PostSearch, self).get_context_data(**kwargs)
+        context['search'] = '{}'.format(self.kwargs['q'])
+
+        return context
 
 class PostDetail(DetailView):
     model = Post

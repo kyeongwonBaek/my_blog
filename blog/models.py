@@ -27,7 +27,7 @@ class Tag(models.Model):
 
 
 class Post(models.Model):
-    title = models.CharField(max_length=100)
+    title = models.CharField(max_length=200)
     content = MarkdownxField()
     head_image = models.ImageField(upload_to='blog/%Y/%m/%d/', blank=True)
     created = models.DateTimeField(auto_now_add=True)

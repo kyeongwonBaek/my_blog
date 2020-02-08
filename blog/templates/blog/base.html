@@ -11,73 +11,7 @@
     <script src="https://kit.fontawesome.com/9052c1ac51.js" crossorigin="anonymous"></script>
 </head>
 <body>
-<div class="navbar navbar-expand-lg fixed-top navbar-dark bg-primary" id="navbar">
-    <div class="container">
-        <a href="../" class="navbar-brand">Lab. kyeong</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarResponsive">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" href="../help/">Blog</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="https://blog.bootswatch.com">About me</a>
-                </li>
-            </ul>
-            <ul class="nav navbar-nav ml-auto">
-                {% if user.is_authenticated %}
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">{{user}}<span class="caret"></span></a>
-                    <div class="dropdown-menu" aria-labelledby="download">
-                        <a class="dropdown-item" href="/accounts/logout/" >log out</a>
-                    </div>
-                </li>
-                {% else %}
-                <li class="nav-item ">
-                    <button type="button" class="btn btn-outline-light" data-toggle="modal" data-target="#LoginModal">
-                        Log in
-                    </button>
-                </li>
-                {% endif %}
-            </ul>
-        </div>
-    </div>
-</div>
-
-{% load socialaccount %}
-<!-- Modal -->
-<div class="modal fade" id="LoginModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Please Log in</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <a role="button" class="btn btn-outline-primary" href="{% provider_login_url 'google' %}"><i class="fab fa-google"></i> Log in with Google</a>
-                        <a role="button" class="btn btn-outline-primary" href="{% provider_login_url 'naver' %}"><i class="fab fa-neos"></i> Log in with Naver</a>
-                    </div>
-                    <div class="col-md-6">
-                        <a role="button" class="btn btn-outline-info" href="/accounts/signup/"><i class="far fa-envelope"></i> sign up with Email</a>
-                        <a role="button" class="btn btn-outline-info" href="/accounts/login/"><i class="far fa-envelope"></i> Log in with Email</a>
-
-                    </div>
-
-                </div>
-
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
+{% include 'basecamp/navbar.html' %}
 <div class="container">
 
     <div class="row">
@@ -96,10 +30,10 @@
                 <h5 class="card-header">Search</h5>
                 <div class="card-body">
                     <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Search for...">
+                        <input type="text" class="form-control"  onkeyup="enterkey();" id="search-input" placeholder="Search for...">
                         <span class="input-group-btn">
-                <button class="btn btn-secondary" type="button">Go!</button>
-              </span>
+                <button class="btn btn-secondary" type="button" onclick="search_post();">Go!</button>
+                        </span>
                     </div>
                 </div>
             </div>
@@ -139,6 +73,21 @@
     <!-- /.row -->
 
 </div>
+
+
+<script>
+    function search_post(){
+        var search_value = document.getElementById('search-input').value;
+        location.href="/blog/search/" + search_value + "/";
+    }
+
+    function enterkey(){
+        if (window.event.keyCode == 13){
+            search_post();
+        }
+    }
+</script>
+
 <script src="{% static 'blog/_assets/js/jquery.min.js' %}"></script>
 <script src="{% static 'blog/_assets/js/popper.min.js' %}"></script>
 <script src="{% static 'blog/bootstrap/bootstrap.min.js' %}"></script>
