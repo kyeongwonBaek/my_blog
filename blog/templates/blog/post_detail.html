@@ -80,16 +80,18 @@
 <div id="comment-list">
     {% for c in object.comment_set.all %}
     <div class="media mb-4" id="comment-id-{{c.pk}}">
-
-        <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">
-
+        {% if c.author.socialaccount_set.all.0.get_avatar_url %}
+        <img width="50px" class="d-flex mr-3 rounded-circle" src="{{ c.author.socialaccount_set.all.0.get_avatar_url }}" alt="">
+        {% else %}
+                <img width="50px" class="d-flex mr-3 rounded-circle" src="https://api.adorable.io/avatars/285/{{c.author}}/" alt="">
+        {% endif %}
 
         <div class="media-body">
             {% if c.author == request.user %}
             <button class="btn btn-sm btn-warning float-right" onclick="location.href='/blog/edit_comment/{{c.pk}}/'">edit</button>
             <button class="btn btn-sm btn-info float-right" data-toggle="modal" data-target="#DeleteCommentModal-{{c.pk}}" >delete</button>
             {% endif %}
-            <h5 class="mt-0">{{c.author}}<small class="test-muted">{{c.created_at}}</small> </h5>
+            <h5 class="mt-0">{{c.author}} <small class="test-muted">{{c.created_at}}</small> </h5>
 
             {{c.get_markdown_content | safe}}
         </div>

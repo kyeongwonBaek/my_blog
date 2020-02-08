@@ -28,6 +28,28 @@ class PostUpdate(UpdateView):
     model = Post
     fields = ['title', 'content', 'head_image', 'category', 'tags']
 
+    def get_context_data(self, **kwargs):
+        context = super(PostUpdate, self).get_context_data(**kwargs)
+        context['category_list'] = Category.objects.all()
+        context['posts_without_category'] = Post.objects.filter(category=None).count()
+        return context
+
+class CommentUpdate(UpdateView):
+    model = Comment
+    form_class = CommentForm
+
+    def get_object(self, queryset=None):
+        comment = super(type(self), self).get_object()
+        if comment.author != self.request.user:
+            raise PermissionError('Comment 수정 권한이 없습니다.')
+        return comment
+
+    def get_context_data(self, **kwargs):
+        context = super(CommentUpdate, self).get_context_data(**kwargs)
+        context['category_list'] = Category.objects.all()
+        context['posts_without_category'] = Post.objects.filter(category=None).count()
+        return context
+
 class PostCreate(LoginRequiredMixin, CreateView):
     model = Post
     fields = ['title', 'content', 'head_image', 'category', 'tags']
@@ -39,6 +61,12 @@ class PostCreate(LoginRequiredMixin, CreateView):
             return super(type(self), self).form_valid(form)
         else:
             return redirect('/blog/')
+
+    def get_context_data(self, **kwargs):
+        context = super(PostCreate, self).get_context_data(**kwargs)
+        context['category_list'] = Category.objects.all()
+        context['posts_without_category'] = Post.objects.filter(category=None).count()
+        return context
 
 class PostListByCategory(ListView):
 
@@ -122,12 +150,3 @@ def delete_post(request, pk):
     else:
         return redirect(post.get_absolute_url())
 
-class CommentUpdate(UpdateView):
-    model = Comment
-    form_class = CommentForm
-
-    def get_object(self, queryset=None):
-        comment = super(type(self), self).get_object()
-        if comment.author != self.request.user:
-            raise PermissionError('Comment 수정 권한이 없습니다.')
-        return comment
