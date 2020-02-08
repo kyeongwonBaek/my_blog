@@ -1,4 +1,4 @@
-from builtins import PermissionError
+from builtins import PermissionError, range
 
 from django.test import TestCase, Client
 from bs4 import BeautifulSoup
@@ -200,6 +200,34 @@ class TestView(TestCase):
         #포스트카드안에 태그가 있어야 함
         post_000_card = main_div.find('div', id='post-card-{}'.format(post_000.pk))
         self.assertIn('#bad_girl', post_000_card.text)# tag가 해당 post의 카드마다 있다
+
+    def test_pagination(self):
+        # 페이지가 5미만인 경우
+        for i in range(0,3):
+            post = create_post(
+                title='The post No.{}'.format(i),
+                content='Content {}'.format(i),
+                author=self.author_000,
+            )
+        response = self.client.get('/blog/')
+        soup = BeautifulSoup(response.content, 'html.parser')
+        self.assertNotIn('Older', soup.body.text)
+        self.assertNotIn('Newer', soup.body.text)
+
+        # 페이지가 5미만인 경우
+
+        for i in range(3,10):
+            post = create_post(
+                title='The post No.{}'.format(i),
+                content='Content {}'.format(i),
+                author=self.author_000,
+            )
+        response = self.client.get('/blog/')
+        soup = BeautifulSoup(response.content, 'html.parser')
+        self.assertIn('Older', soup.body.text)
+        self.assertIn('Newer', soup.body.text)
+
+
 
 
     def test_post_detail(self):

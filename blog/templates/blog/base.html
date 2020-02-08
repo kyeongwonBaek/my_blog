@@ -25,6 +25,8 @@
                 <li class="nav-item">
                     <a class="nav-link" href="https://blog.bootswatch.com">About me</a>
                 </li>
+            </ul>
+            <ul class="nav navbar-nav ml-auto">
                 {% if user.is_authenticated %}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">{{user}}<span class="caret"></span></a>
@@ -33,12 +35,13 @@
                     </div>
                 </li>
                 {% else %}
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#LoginModal">
-                    Log in
-                </button>
+                <li class="nav-item ">
+                    <button type="button" class="btn btn-outline-light" data-toggle="modal" data-target="#LoginModal">
+                        Log in
+                    </button>
+                </li>
                 {% endif %}
             </ul>
-
         </div>
     </div>
 </div>
