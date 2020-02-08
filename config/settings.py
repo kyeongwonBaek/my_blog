@@ -43,6 +43,8 @@ INSTALLED_APPS = [
 
     'allauth',
     'allauth.account',
+    'django.contrib.sites',
+
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.naver',
@@ -145,9 +147,10 @@ AUTHENTICATION_BACKENDS = (
 
 )
 
-SITE_ID = 1
+SITE_ID = 2
 ACCOUNT_EMAIL_REQUIRED =True
 ACCOUNT_EMAIL_VERIFICATION ='none'
 
 LOGIN_REDIRECT_URL='/blog/'
+
 
