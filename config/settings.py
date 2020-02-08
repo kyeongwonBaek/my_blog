@@ -152,3 +152,5 @@ ACCOUNT_EMAIL_VERIFICATION ='none'
 
 LOGIN_REDIRECT_URL='/blog/'
 
+from django.contrib.sites.models import Site
+Site.objects.create(pk=1, domain='www.kyoeongkate.com', name='kyoeongkate.com')
