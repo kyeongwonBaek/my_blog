@@ -36,7 +36,7 @@ class Post(models.Model):
     tags = models.ManyToManyField(Tag,  blank=True)
 
     class Meta:
-        ordering = ['-created']
+        ordering = ['-created',]
 
     def __str__(self):
         return '{}::{}'.format(self.title, self.author)

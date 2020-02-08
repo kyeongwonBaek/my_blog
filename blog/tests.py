@@ -94,8 +94,8 @@ class TestModel(TestCase):
         self.assertEqual(post_000.tags.count(), 2)# post는 여러개의 tag를 가질 수 있다
         self.assertEqual(tag_001.post_set.count(), 2)# 하나의 tag는 여러개의 post에 붙을 수 있다
         # 하나의 tag는 자신을 가진 post들을 불러올 수 있다
-        self.assertEqual(tag_001.post_set.first(), post_000)
-        self.assertEqual(tag_001.post_set.last(), post_001)
+        self.assertEqual(tag_001.post_set.first(), post_001)
+        self.assertEqual(tag_001.post_set.last(), post_000)
     def test_post(self):
         category = create_category(
 
@@ -225,7 +225,6 @@ class TestView(TestCase):
         response = self.client.get('/blog/')
         soup = BeautifulSoup(response.content, 'html.parser')
         self.assertIn('Older', soup.body.text)
-        self.assertIn('Newer', soup.body.text)
 
 
 
@@ -533,4 +532,29 @@ class TestView(TestCase):
         with self.assertRaises(PermissionError):
             response = self.client.get('/blog/edit_comment/{}/'.format(comment_000.pk))
 
+    def test_search(self):
+        post_000 = create_post(
+            title='The first post',
+            content='Hello World',
+            author=self.author_000,
+        )
 
+        post_001 = create_post(
+            title='Happy',
+            content='My friends',
+            author=self.author_000,
+
+        )
+        # 제목으로 search 가능
+        response = self.client.get('/blog/search/Happy/')
+        self.assertEqual(response.status_code, 200)
+        soup = BeautifulSoup(response.content, 'html.parser')
+        self.assertIn(post_001.title, soup.body.text)
+        self.assertNotIn(post_000.title, soup.body.text)
+
+        # 내용으로 search 가능
+        response = self.client.get('/blog/search/Hello World/')
+        self.assertEqual(response.status_code, 200)
+        soup = BeautifulSoup(response.content, 'html.parser')
+        self.assertIn(post_000.content, soup.body.text)
+        self.assertNotIn(post_001.content, soup.body.text)
