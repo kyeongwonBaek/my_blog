@@ -1,7 +1,23 @@
 {% extends './new_base.html' %}
-
+{% load static %}
 {% block content %}
 <div class="container">
-    <h1>About me</h1>
+    <div class="row">
+        <div class="col-md-8">
+            <h1 class="my-3">About me</h1>
+            <h3 class="my-3">안녕하세요. 개발자 백경원입니다.</h3>
+            <h5 class="my-3">새로운 일을 기다리고 있습니다.</h5>
+            <p>python과 django등 다양한 분야에서 재미있는 일을 찾고 있습니다</p>
+        </div>
+        <div class="col-md-4">
+            <img width="230px" src="{% static 'basecamp/images/me.png' %}">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md">
+            <h3 class="my-3">Contact me</h3>
+            <h5>Email: <small>forte111@naver.com</small></h5>
+        </div>
+    </div>
 </div>
 {% endblock %}
