@@ -2,7 +2,7 @@
 블로그 기본 기능 구현에 집중하여 진행한 프로젝트.
 
 
-## # My Blog
+## # My Blog - www.kyeongkate.com
 
 <img src = "blog.PNG">
 
