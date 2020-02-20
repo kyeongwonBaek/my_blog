@@ -40,16 +40,25 @@ class PostDetail(DetailView):
         context['posts_without_category'] = Post.objects.filter(category=None).count()
         context['comment_form'] = CommentForm()
         return context
-class PostUpdate(UpdateView):
+# views.py
+class PostUpdate(LoginRequiredMixin, UpdateView):
     model = Post
     fields = ['title', 'content', 'head_image', 'category', 'tags']
+
+
+    def form_valid(self, form):
+        current_user = self.request.user
+        if current_user == Post.author:
+            return super(type(self), self).form_valid(form)
+        else:
+            raise PermissionError('Post 수정 권한이 없습니다.')
 
     def get_context_data(self, **kwargs):
         context = super(PostUpdate, self).get_context_data(**kwargs)
         context['category_list'] = Category.objects.all()
         context['posts_without_category'] = Post.objects.filter(category=None).count()
         return context
-
+# views.py
 class CommentUpdate(UpdateView):
     model = Comment
     form_class = CommentForm
@@ -65,7 +74,7 @@ class CommentUpdate(UpdateView):
         context['category_list'] = Category.objects.all()
         context['posts_without_category'] = Post.objects.filter(category=None).count()
         return context
-
+# views.py
 class PostCreate(LoginRequiredMixin, CreateView):
     model = Post
     fields = ['title', 'content', 'head_image', 'category', 'tags']
@@ -125,7 +134,7 @@ class PostListByTag(ListView):
         context['tag'] = Tag.objects.get(slug=slug)
 
         return context
-
+# views.py
 def new_comment(request, pk):
     post = Post.objects.get(pk=pk)
 
@@ -142,8 +151,7 @@ def new_comment(request, pk):
         return redirect('/blog/')
 
 
-
-
+# views.py
 def delete_comment(request, pk):
     comment = Comment.objects.get(pk=pk)
     post = comment.post
@@ -154,7 +162,7 @@ def delete_comment(request, pk):
         return redirect(post.get_absolute_url() + '#comment-list')
     else:
         raise PermissionError('Comment 삭제 권한이 없습니다')
-
+# views.py
 def delete_post(request, pk):
     post = Post.objects.get(pk=pk)
     if request.user == post.author:
