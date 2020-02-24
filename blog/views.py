@@ -45,13 +45,11 @@ class PostUpdate(LoginRequiredMixin, UpdateView):
     model = Post
     fields = ['title', 'content', 'head_image', 'category', 'tags']
 
-
-    def form_valid(self, form):
-        current_user = self.request.user
-        if current_user == Post.author:
-            return super(type(self), self).form_valid(form)
-        else:
-            raise PermissionError('Post 수정 권한이 없습니다.')
+    def get_object(self, queryset=None):
+        post = super(type(self), self).get_object()
+        if post.author != self.request.user:
+            raise PermissionError('Comment 수정 권한이 없습니다.')
+        return post
 
     def get_context_data(self, **kwargs):
         context = super(PostUpdate, self).get_context_data(**kwargs)
